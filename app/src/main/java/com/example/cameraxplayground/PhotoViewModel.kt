@@ -49,10 +49,4 @@ class PhotoViewModel : ViewModel() {
         }
     }
 
-    fun resetAndShuffleList(){
-        shuffledList.clear()
-        shuffledList = originalList.shuffled().toMutableList()
-        counterValue = 0
-    }
-
 }

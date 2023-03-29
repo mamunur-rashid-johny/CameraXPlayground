@@ -216,6 +216,7 @@ class MainActivity : AppCompatActivity() {
                     .addOnSuccessListener { faces ->
                         if (faces.size == 1) {
                             binding.textNoFaceText.visibility = View.GONE
+                            binding.faceLottieAnim.visibility = View.VISIBLE
                             binding.textCameraActionText.visibility = View.VISIBLE
                             when(viewModel.cameraActionEnum){
                                 SMILE -> {
@@ -251,10 +252,10 @@ class MainActivity : AppCompatActivity() {
                                          2->{
                                              if ((faces[0]?.leftEyeOpenProbability?:0f) >= OPEN_THRESHOLD && (faces[0]?.rightEyeOpenProbability?:0f) >= OPEN_THRESHOLD ){
                                                 val currentTime = System.currentTimeMillis()
-                                                 if (((currentTime-startTimeStamp)/1000.0)<5){
-                                                     blinkState = 3
+                                                 blinkState = if (((currentTime-startTimeStamp)/1000.0)<5){
+                                                     3
                                                  }else{
-                                                     blinkState = 0
+                                                     0
                                                  }
                                              }
                                          }
@@ -273,10 +274,11 @@ class MainActivity : AppCompatActivity() {
                             }
                             imageProxy.close()
                         }else{
+                            binding.textCameraActionText.visibility = View.GONE
+                            binding.faceLottieAnim.visibility = View.GONE
                             binding.textNoFaceText.visibility = View.VISIBLE
                             viewModel.shuffleAndResetList()
                             val msg = if (faces.isEmpty()) "No face detected!" else "${faces.size} faces detected!"
-                            binding.textCameraActionText.visibility = View.GONE
                             binding.textNoFaceText.text = msg
                             imageProxy.close()
                         }
@@ -284,7 +286,7 @@ class MainActivity : AppCompatActivity() {
                         if (viewModel.counterValue==4){
                             imageProxy.close()
                             detector.close()
-                            cameraProvider.unbindAll()
+                          //  cameraProvider.unbindAll()
                             viewModel.counterValue = 0
                             capturePhoto()
                             blinkState = 0
